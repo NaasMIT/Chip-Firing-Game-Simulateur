@@ -22,7 +22,7 @@ class Click implements ViewerListener {
 
     @Override
     public void buttonReleased(String id) {
-        modelMainFrame.changeColor (id);
+        modelMainFrame.toggleSelectedNode(id);
     }
     
 }

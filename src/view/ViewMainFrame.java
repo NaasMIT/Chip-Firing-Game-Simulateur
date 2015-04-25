@@ -2,6 +2,7 @@ package view;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -20,13 +21,14 @@ import model.ModelMainFrame;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.ViewerPipe;
 
 public class ViewMainFrame extends javax.swing.JFrame implements Observer {
 
     // L'instance de notre objet contrôleur
     private ModelMainFrame model;
     private Viewer viewer;
-            
+
     public ViewMainFrame() {
         initComponents();
     }
@@ -295,7 +297,7 @@ public class ViewMainFrame extends javax.swing.JFrame implements Observer {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(viewGraph, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(optionsChips, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(optionsChips, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tabs.addTab("Play CFG", playCFG);
@@ -363,13 +365,9 @@ public class ViewMainFrame extends javax.swing.JFrame implements Observer {
     //Implémentation du pattern observer
     @Override
     public void update(Observable o, Object o1) {
-        System.out.println(o.toString());
-        
-        if (o1 instanceof Node) {
-            selectedNodeText.append(o1.toString());
-        }
-        else if (o1 instanceof Graph) {
-            
+
+        if (o1 instanceof Set) {
+            selectedNodeText.setText(o1.toString());
         }
     }
 

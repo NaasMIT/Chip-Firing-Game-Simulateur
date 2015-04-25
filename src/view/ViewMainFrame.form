@@ -140,7 +140,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="viewGraph" pref="341" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="optionsChips" min="-2" pref="155" max="-2" attributes="0"/>
+                      <Component id="optionsChips" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

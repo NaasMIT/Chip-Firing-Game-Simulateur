@@ -1,0 +1,37 @@
+node.unmarked { 
+    size: 20px; 
+    fill-color: blue; 
+    stroke-mode: plain; 
+    stroke-color: #999; 
+    shadow-mode: plain; 
+    shadow-width: 3px; 
+    shadow-color: grey; 
+    shadow-offset: 0px; 
+}
+
+node.marked { 
+    size: 20px; 
+    fill-color: blue; 
+    stroke-mode: plain; 
+    stroke-color: #999; 
+    shadow-mode: plain; 
+    shadow-width: 3px; 
+    shadow-color: red; 
+    shadow-offset: 0px; 
+} 
+
+edge.unmarked { 
+    fill-color: blue; 
+    shadow-mode: plain; 
+    shadow-width: 3px; 
+    shadow-color: grey; 
+    shadow-offset: 0px; 
+}
+
+edge.marked { 
+    fill-color: blue; 
+    shadow-mode: plain; 
+    shadow-width: 3px; 
+    shadow-color: red; 
+    shadow-offset: 0px; 
+}

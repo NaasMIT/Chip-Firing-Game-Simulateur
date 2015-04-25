@@ -1,6 +1,10 @@
 package controler;
 
+import core.RetrieveChipOp;
+import core.AddChipOp;
+import core.IChipOperation;
 import core.ModeSequentialBlock;
+import core.PatternUpdate;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
@@ -15,6 +19,8 @@ import view.ViewMainFrame;
 public class ControlerMainFrame extends AbstractControler {
 
     private ViewMainFrame viewMainFrame;
+    private Thread checkUpdateGraph;
+    private Thread compute;
 
     public ControlerMainFrame(AbstractModel model) {
         super(model);
@@ -27,13 +33,18 @@ public class ControlerMainFrame extends AbstractControler {
         modelMainFrame.addObserver(viewMainFrame);
         viewMainFrame.getLogButton().addActionListener((ActionListener) this);
         viewMainFrame.getOptionControlRun().addActionListener((ActionListener) this);
+        viewMainFrame.getOptionControlForward().addActionListener((ActionListener) this);
+        viewMainFrame.getModeAddChips().addActionListener((ActionListener) this);
+        viewMainFrame.getModeAddChips().addActionListener((ActionListener) this);
+        viewMainFrame.getValideOptionChips().addActionListener((ActionListener) this);
+        viewMainFrame.getInputNbChips().addActionListener((ActionListener) this);
 
         final ViewerPipe fromViewer;
         fromViewer = viewMainFrame.getViewer().newViewerPipe();
         fromViewer.addViewerListener(new Click(modelMainFrame));
         fromViewer.addSink(model.getGraph());
 
-        Thread pu = new Thread(new Runnable() {
+        checkUpdateGraph = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -46,8 +57,7 @@ public class ControlerMainFrame extends AbstractControler {
             }
         });
 
-        pu.start();
-
+        checkUpdateGraph.start();
     }
 
     public void changeColorNode(String id) {
@@ -68,37 +78,93 @@ public class ControlerMainFrame extends AbstractControler {
     }
 
     @Override
-    public void control() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == viewMainFrame.getLogButton()) {
-            ModelLogFrame modelLogFrame = new ModelLogFrame();
-            ViewLog viewLog = new ViewLog(modelLogFrame);
-            ControlerLog controlerLog = new ControlerLog(viewLog, modelLogFrame);
-            viewLog.setVisible(true);
+            logButtonPerformed();
         }
 
         if (ae.getSource() == viewMainFrame.getOptionControlRun()) {
+            optionControlRun();
+        }
 
-            Thread compute = new Thread(new Runnable() {
+        if (ae.getSource() == viewMainFrame.getOptionControlForward()) {
+            optionControlForward();
+        }
 
-                @Override
-                public void run() {
-                    while (true) {
-                        ((ModelMainFrame) model).execute(new ModeSequentialBlock());
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(ControlerMainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+        if (ae.getSource() == viewMainFrame.getValideOptionChips()) {
+            valideOptionChips();
+        }
+    }
+
+    @Override
+    public void control() {
+        if (compute.isAlive()) {
+
+        }
+    }
+
+    public void logButtonPerformed() {
+        ModelLogFrame modelLogFrame = new ModelLogFrame();
+        ViewLog viewLog = new ViewLog(modelLogFrame);
+        ControlerLog controlerLog = new ControlerLog(viewLog, modelLogFrame);
+        viewLog.setVisible(true);
+    }
+
+    public void optionControlRun() {
+        compute = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (true) {
+                    PatternUpdate p = new PatternUpdate();
+                    try {
+                        p.initPattern("({1,2},{3})", model.getGraph().getNodeCount());
+                    } catch (Exception ex) {
+                        Logger.getLogger(ControlerMainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    ((ModelMainFrame) model).execute(new ModeSequentialBlock(p));
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ControlerMainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            });
-            
-            compute.start();
+            }
+        });
+        compute.start();
+    }
+
+    public void optionControlForward() {
+        compute = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                PatternUpdate p = new PatternUpdate();
+                try {
+                    p.initPattern("({1,2},{3})", model.getGraph().getNodeCount());
+                } catch (Exception ex) {
+                    Logger.getLogger(ControlerMainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                ((ModelMainFrame) model).execute(new ModeSequentialBlock(p));
+            }
+        });
+
+        compute.start();
+    }
+
+    private void valideOptionChips() {
+        IChipOperation op;
+        
+        if (viewMainFrame.getModeAddChips().isSelected())
+        {
+            op = new AddChipOp();
+        } else 
+        {
+            op = new RetrieveChipOp();
         }
+        
+        int nbChips = Integer.parseInt(viewMainFrame.getInputNbChips().getText());
+        ((ModelMainFrame)model).computeNodesValues(nbChips, op);
     }
 }
